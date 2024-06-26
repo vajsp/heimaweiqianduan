@@ -1,0 +1,20 @@
+{
+    "name": "heimaweiqianduan",
+    "version": "1.0.0",
+    "description": "黑马微前端公开课\r https://www.bilibili.com/video/BV12T411q7dq/?spm_id_from=333.337.search-card.all.click&vd_source=b16d2ffe19be06c955533d871f8dad59",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node ./build/run.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/vajsp/heimaweiqianduan.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/vajsp/heimaweiqianduan/issues"
+    },
+    "homepage": "https://github.com/vajsp/heimaweiqianduan#readme"
+}
