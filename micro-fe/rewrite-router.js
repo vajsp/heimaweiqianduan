@@ -31,7 +31,7 @@ export const rewriteRouter = () => {
         handleRouter();
     };
 
-    const rawReplaceState = window.history.pushState;
+    const rawReplaceState = window.history.replaceState;
     window.history.replaceState = (...args) => {
         prevRoute = window.location.pathname;
         rawReplaceState.apply(window.history, args);
