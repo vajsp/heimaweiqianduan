@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body>
+        <script>
+            class LegacySandbox {
+                constructor() {
+                    // 1.修改的内容 2.新增的内容 3.不管修改还是新增的
+                    this.modifyPropsMap = new Map();
+                    this.addedPropsMap = new Map();
+                    this.currentPropsMap = new Map();
+
+                    const fakeWindow = Object.create(null);
+                    const proxy = new Proxy(fakeWindow, {
+                        get: (target, key, recevier) => {
+                            return window[key];
+                        },
+                        set: (target, key, value) => {
+                            if (!window.hasOwnProperty(key)) {
+                                // 添加属性
+                                this.addedPropsMap.set(key, value);
+                            } else if (!this.modifyPropsMap.has(key)) {
+                                // 保存修改前的值
+                                this.modifyPropsMap.set(key, window[key]);
+                            }
+                            this.currentPropsMap.set(key, value);
+                            window[key] = value; //修改成最新内容
+                        },
+                    });
+                }
+
+                setWindowProp(key, value) {
+                    if (value === undefined) {
+                        delete window[key];
+                    } else {
+                        window[key] = value; //覆盖前端
+                    }
+                }
+                active() {
+                    this.currentPropsMap.forEach((value, key) => {
+                        this.setWindowProp(key, value);
+                    });
+                }
+                inactive() {
+                    this.modifyPropsMap.forEach((value, key) => {
+                        this.setWindowProp(key, value);
+                    });
+                    this.addedPropsMap.forEach((value, key) => {
+                        this.setWindowProp(key, undefined);
+                    });
+                }
+            }
+            let sandbox = new LegacySandbox();
+            sandbox.proxy.a = 100;
+            console.log(window.a);
+            sandbox.inactive();
+            console.log(window.a);
+            sandbox.active();
+
+            // 基于proxy的沙箱 如果两个应用一起运行就乱了
+            // 节约内存
+        </script>
+    </body>
+</html>

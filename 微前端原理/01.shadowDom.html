@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body></body>
+</html>
+<script>
+    // 影子dom video audio标签
+    const tmeplate = `
+    <div id="name">
+    <div id="inner">123</div>
+    <style>div{color:'red'}</style>
+    </div>
+  `;
+
+    const container = document.createElement('div');
+    container.innerHTML = tmeplate;
+
+    const appElement = container.firstChild;
+    console.log(appElement);
+    let oldContent = appElement.innerHTML;
+    let shadow = appElement.attachShadow({ mode: 'closed' });
+    shadow.innerHTML = oldContent;
+
+    document.body.appendChild(appElement);
+</script>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body>
+        <!-- 沙箱 防止应用加载的时候 对window造成污染 -->
+        <!-- a->更改了window属性 删掉 -->
+        <!-- b->更改了window属性 -->
+
+        <!-- 先保留a应用的属性 失活的时候 把修改的属性存起来 激活的时候还原回来 -->
+        <!-- 快照浪费内存 因为要给window拍照 -->
+
+        <script>
+            class SnapshotSandbox {
+                constructor() {
+                    this.modifyPropsMap = {}; // 储存全局哪些属性被修改了
+                }
+                active() {
+                    this.windowSnapShot = {};
+                    // 给window拍照
+                    this.windowSnapShot[prop] = window[prop];
+                    Object.keys(window).forEach((props) => {
+                        this.windowSnapShot[prop] = window[prop];
+                    });
+
+                    Object.keys(this.modifyPropsMap).forEach((prop) => {
+                        window[prop] = this.modifyPropsMap[prop];
+                    });
+                }
+                inactive() {
+                    this.modifyPropsMap = Object.keys(window).forEach(
+                        (prop) => {
+                            if (window[prop] !== this.windowSnapShot[prop]) {
+                                this.modifyPropsMap[prop] = window[prop];
+                                window[prop] = this.windowSnapShot[prop];
+                            }
+                        }
+                    );
+                }
+            }
+
+            // 浪费内存
+        </script>
+    </body>
+</html>

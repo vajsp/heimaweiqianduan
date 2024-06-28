@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body>
+        <script>
+            // 多例来实现
+            class ProxySandbox {
+                constructor() {
+                    this.running = false;
+                    const fakeWindow = Object.create(null);
+                    this.proxy = new Proxy(fakeWindow, {
+                        get: (target, key) => {
+                            if (!this.running) {
+                                return window[key];
+                            }
+
+                            return key in target ? target[key] : window[key];
+                        },
+                        set: (target, key, value) => {
+                            target[key] = value;
+                            return true;
+                        },
+                        // 修改不操作window
+                    });
+                }
+                active() {
+                    if (!this.running) {
+                        this.running = true;
+                    }
+                }
+                inactive() {
+                    this.running = false;
+                }
+            }
+
+            let sandbox1 = new ProxySandbox();
+            let sandbox2 = new ProxySandbox();
+            sandbox1.active();
+            sandbox2.active();
+            sandbox1.proxy.a = 100;
+            sandbox2.proxy.a = 100; //不会影响window
+            console.log(sandbox1.proxy.a);
+            console.log(sandbox2.proxy.b);
+        </script>
+    </body>
+</html>
