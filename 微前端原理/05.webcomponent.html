@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body>
+        <!-- 
+        1.custom elements:允许用户自定义一个元素 随便起名字
+        2.shadow DOM样式隔离是webcomponent的一部分
+        3.可以支持组件的特点 模板 插槽 生命周期  属性都是组件的特点
+      -->
+        <my-button type="primary">我是按钮</my-button>
+        <template id="btn">
+            <button class="my-button"><slot>按钮</slot></button>
+        </template>
+        <script>
+            class MyButton extends HTMLElement {
+                connectCallback() {
+                    // vue中的mounted
+                    console.log('元素加载完毕');
+                    // 元素挂载完成后，我们需要获取传入的属性，并使用对应的模板来渲染
+                    this.shadow = this.attachShadow({ mode: 'closed' });
+                    let btn = document.getElementById('btn');
+
+                    const btnType = this.getAttribute('type') || 'default';
+
+                    let types = {
+                        parimary: {
+                            background: 'blue',
+                        },
+                        default: {
+                            background: '#a1a1a1',
+                        },
+                    };
+
+                    let style = document.createElement('style');
+                    style.innerHTML = `
+                      .my-button {
+                        backgound:${types[btnType]}
+                        color:#fff;
+                        padding: 10px 20px 
+                      }
+                    `;
+
+                    let tpl = btn.content.cloneNode(true);
+                    this.shadow.appendChild(tpl);
+                    this.shadow.appendChild(style);
+                }
+                static get observedAttributes() {
+                    return ['type'];
+                }
+
+                attributeChangedCallback(name, oldVal, newVal) {
+                    if (this.shadow) {
+                        const btn = this.shadow.querySelector('.my-button');
+                        btn.style.background = this.types[newVal].background;
+                        this.dispatchEvent(new Event('update'));
+                    }
+                }
+
+                disconnectedCallback() {} //组件卸载触发
+                adoptedCallback() {} // 移动到其他地方会触发
+            }
+
+            window.customElements.define('my-button', MyButton);
+        </script>
+    </body>
+</html>
